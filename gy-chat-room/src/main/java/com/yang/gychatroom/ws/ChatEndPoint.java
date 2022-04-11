@@ -1,6 +1,9 @@
 package com.yang.gychatroom.ws;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yang.gychatroom.config.GetHttpSessionConfigurator;
+import com.yang.gychatroom.pojo.Message;
+import com.yang.gychatroom.pojo.ResultMessage;
 import com.yang.gychatroom.util.MessageUtils;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -73,9 +76,23 @@ public class ChatEndPoint {
     }
 
     @OnMessage
+    @SneakyThrows
     // 接收客户端发送的数据时被调用
     public void onMessage(String massage,Session session){
-
+        // 接收的是String 首先转成ResultMessage对象
+        Message msg = JSONObject.parseObject(massage, Message.class);
+        // 获取要发送消息的用户名
+        String toName = msg.getToName();
+        // 获取发送的消息
+        String message = msg.getMessage();
+        // 获取当前用户名
+        String username = (String) httpSession.getAttribute("username");
+        // 获取推送给指定用户的消息格式
+        String message1 = MessageUtils.getMessage(false, username, message);
+        // 获取被推送的 basicRemote 对象
+        RemoteEndpoint.Basic basicRemote = onLineUsers.get(toName).session.getBasicRemote();
+        // 通过basicRemote对象进行发送消息
+        basicRemote.sendText(message1);
     }
 
     @OnClose

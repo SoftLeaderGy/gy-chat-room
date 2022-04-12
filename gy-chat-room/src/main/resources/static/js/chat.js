@@ -18,6 +18,7 @@ $(function () {
             $('#chatMeu').html('<p>用户：' + res + "<span style='float: right;color: greenyellow; height: 20px'>在线</span></p>")
         }
     });
+    debugger
     //创建websocket对象
     var ws = new WebSocket("ws://localhost:8088/chat");
 
@@ -25,6 +26,7 @@ $(function () {
 
     //建立连接后触发
     ws.onopen = function () {
+        debugger
         $('#chatMeu').html('<p>用户：' + username + "<span style='float: right;color: greenyellow; height: 20px'>在线</span></p>")
     };
 
